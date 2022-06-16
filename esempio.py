@@ -24,11 +24,7 @@ Gaussian_filter = Create_Gaussian_Filter(1)
 Image_Example = 255 * np.random.rand(10,10)
 
 
-Blurred_img = Blur_Image(Image_Example,Gaussian_filter)
-
-
-
-blurred_image = Blur_Image(inverted_image,Gaussian_filter)
+blurred_image = convolve_image(inverted_image,Gaussian_filter)
 
 print("Blur_image OK")
 
@@ -41,4 +37,4 @@ sketched_image = Image_Division(gray_image, invert_blurred_img,255)
 print("Processo completato")
 
 
-save_gray_image(sketched_image, "Photo3 modificata")
+save_gray_image(sketched_image, "Photo4 modificata")
