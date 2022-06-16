@@ -1,6 +1,8 @@
 from Function.load_save_image import *
 from Function.Process_Image import *
 import cv2
+import numpy as np
+from scipy import ndimage
 
 image = load_image("Data/Input/Photo1.jpg")
 
@@ -11,13 +13,24 @@ channels = image.shape[2]
 gray = RGB_TO_GRAY(image)
 
 Filter = Create_Gaussian_Filter(1)
-blurred_gray = convolve_Image(gray,Filter)
+blurred_gray = ndimage.convolve(gray,Filter)
 
-img_n = cv2.normalize(blurred_gray, dst=None, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_8U)
-edges = cv2.Canny(img_n,100,200)
+gx = sobel_filters(blurred_gray, 'x')
+gx = Normalize(gx)
+gy = sobel_filters(blurred_gray, 'y')
+gy = Normalize(gy)
 
+Mag = np.hypot(gx,gy)
 
-color = cv2.bilateralFilter(image,9,250,250)
-cartoon = cv2.bitwise_and(color,color,mask=edges)
+Mag = Mag * 255
 
-save_gray_image(cartoon, "Y")
+Grad = np.degrees(np.arctan2(gy,gx))
+
+#Non Maximum supression
+img_con_Nms = NonMaxSup(Mag, Grad)
+
+#THresHolding
+
+Thresh_img = thresholding(img_con_Nms,8, 43, 255, 50)
+
+save_gray_image(Thresh_img, "Thresh")

@@ -1,6 +1,7 @@
 import numpy as np
 import PIL
 import math
+from scipy import ndimage
 #Converto in immagine bianco e nero
 
 def RGB_TO_GRAY(Image):
@@ -97,10 +98,81 @@ def Image_Division(Image1,Image2,scale):
     Final_Image = np.zeros((Image1.shape[0],Image1.shape[1]))
     for x in range(0,Image1.shape[0]):
         for y in range(0,Image1.shape[1]):
-            Final_Image[x,y] = Image1[x,y] * 255 / Image2[x,y]
+            Final_Image[x,y] = Image1[x,y] * 230 / Image2[x,y]
     return Final_Image
 
-#Funzioni per colorize sobel            
+#Funzioni per colorize sobel   
+
+def sobel_filters(image,direction):
+    
+    if (direction == "x"):
+        Gx_Filter = np.array([[-1,0,1],[-2,0,2],[-1,0,1]])
+        Ret_Image = ndimage.convolve(image,Gx_Filter)
+    elif (direction == "y"):
+         Gy_Filter = np.array([[-1,-2,-1],[0,0,0],[1,2,1]])
+         Ret_Image = ndimage.convolve(image,Gy_Filter)
+
+    return Ret_Image
+
+
+def Normalize(Image):
+    
+    Nimg = Image / np.max(Image)
+    
+    return Nimg
+    
+def NonMaxSup(Mag, Grad):
+    img = np.zeros(Mag.shape)
+    for i in range(1, int(Mag.shape[0]) - 1):
+        for j in range(1, int(Mag.shape[1]) - 1):
+            if((Grad[i,j] >= -22.5 and Grad[i,j] <= 22.5) or (Grad[i,j] <= -157.5 and Grad[i,j] >= 157.5)):
+                if((Mag[i,j] > Mag[i,j+1]) and (Mag[i,j] > Mag[i,j-1])):
+                    img[i,j] = Mag[i,j]
+                else:
+                    img[i,j] = 0
+            if((Grad[i,j] >= 22.5 and Grad[i,j] <= 67.5) or (Grad[i,j] <= -112.5 and Grad[i,j] >= -157.5)):
+                if((Mag[i,j] > Mag[i+1,j+1]) and (Mag[i,j] > Mag[i-1,j-1])):
+                    img[i,j] = Mag[i,j]
+                else:
+                    img[i,j] = 0
+            if((Grad[i,j] >= 67.5 and Grad[i,j] <= 112.5) or (Grad[i,j] <= -67.5 and Grad[i,j] >= -112.5)):
+                if((Mag[i,j] > Mag[i+1,j]) and (Mag[i,j] > Mag[i-1,j])):
+                    img[i,j] = Mag[i,j]
+                else:
+                    img[i,j] = 0
+            if((Grad[i,j] >= 112.5 and Grad[i,j] <= 157.5) or (Grad[i,j] <= -22.5 and Grad[i,j] >= -67.5)):
+                if((Mag[i,j] > Mag[i+1,j-1]) and (Mag[i,j] > Mag[i-1,j+1])):
+                    img[i,j] = Mag[i,j]
+                else:
+                    img[i,j] = 0
+
+    return img
+    
+
+def thresholding(img,low,high,strong,weak):
+    Ret_Image = np.zeros(img.shape)
+    for x in range(0,img.shape[0]):
+        for y in range(0,img.shape[1]):
+            
+            if img[x,y] >= high:
+                Ret_Image[x,y] = strong
+            elif img[x,y] < high and img[x,y] >= low:
+                Ret_Image[x,y] = weak
+            else:
+                Ret_Image[x,y] = 0
+    return Ret_Image
+
+ 
+
+#def make_bilateral_filter(img)
+           
+    
+# def bilateral_filter(img,sigma1,sigma2):
+#     Filtro = Create_Gaussian_Filter(sigma1)
+    
+#     Ret_Image = np.zeros(img.shape)
+    
+         
 
     
     
