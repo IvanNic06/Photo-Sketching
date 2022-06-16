@@ -10,28 +10,71 @@ print("2 - ")
 print("3 - ")
 
 #Carico l'Immagine
-image = load_image("Data/Input/Photo1.jpg")
+Numero_immagine = '1'
+image = load_image("Data/Input/Photo"+Numero_immagine+".jpg")
 width = image.shape[0]
 height = image.shape[1]
 channels = image.shape[2]
 
-selezione = str(input())
+selezione = str(input(""))
 
 #Photo sketching
-if selezione == '1':
-    print("Hai selezionato Photo sketching")
+#☺if selezione == '1':
+    # print("Hai selezionato Photo sketching")
     
-    #Passo 1: Trasformo l'immagine in bianco e nero
+    # #Passo 1: Trasformo l'immagine in bianco e nero
     
-    gray_image = RGB_TO_GRAY(image)
+    # print("Fase 1: RGB TO GRAY")
+    
+    # gray_image = RGB_TO_GRAY(image)
+    
+    # print("Fase 1 COMPLETATA")
+    
+    # #Passo 2: Inverto l'intensità dei pixel dell'immagine in bianco e nero 
+    
+    # print("Fase 2: INVERT IMAGE")
+    
+    # inverted_image = Invert_Image(gray_image)
+    
+    # print("Fase 2 COMPLETATA")
+    
+    # #Passo 3: Applico una sfocatura Gaussiana
+    
+    # print("Fase 3: GAUSSIAN BLUR")
+    
+    # Gaussian_Filter = Create_Gaussian_Filter(1)
+    
+    # blurred_img = Blur_Image(inverted_image, Filter)
+    
+    # print("Fase 3 COMPLETATA")
+    
+    # #Passo 4: Inverto la foto dopo aver applicato la sfocatura
+    
+    # print("Fase 4: INVERT BLURRED IMAGE")
+    
+    # inverted_blurred_img = Invert_Image(blurred_img)
+    
+    # print("Fase 4 COMPLETATA")
+    
+    # #Passo 5: Procedo con lo sketching dell'immagine
+    
+    # print("Fase 5: IMAGE DIVISION")
+    
+    # sketched_image = Image_Division(gray_image, inverted_blurred_img, 255)
+    
+    # print("Fase 5 COMPLETATA")
     
     
-    #Passo 2: Inverto l'intensità dei pixel dell'immagine in bianco e nero 
+    # #Passo 6: Salvataggio della foto
     
-    inverted_image = Invert_Image(gray_image)
+    # print("Salvataggio della foto in corso")
     
+    # save_gray_image(sketched_image, "Photo"+Numero_immagine+" modificata")
     
-    #Passo 3: Applico una sfocatura Gaussiana
+    # print("Salvataggio completatoa")
+    
+    # print("Photo sketching completato, la foto è stata salvata in Data/Output")
+    
     
     
     
