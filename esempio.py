@@ -1,5 +1,5 @@
 from Function.load_save_image import *
-from Function.Photo_Sketching import *
+from Function.Process_Image import *
 
 image = load_image("Data/Input/Photo3.jpg")
 

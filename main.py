@@ -1,5 +1,5 @@
 from Function.load_save_image import *
-from Function.Photo_Sketching import *
+from Function.Process_Image import *
 
 #Introduzione e scelta filtro 
 print("Progetto Image Transformation\n")

@@ -20,6 +20,6 @@ def save_image(array,imagename):
 #Prendo in input un array 2x2 e lo converto in un tipo PIL.Image in modo da poter salvare la foto 
 def save_gray_image(array,imagename):
     image = PIL.Image.fromarray(array)
-    image.convert("L").save("Data/Output/" + imagename + ".png")
+    image.convert("L").save("Data/Output_Photo_Sketching/" + imagename + ".png")
     return
     
