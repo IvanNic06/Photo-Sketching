@@ -1,6 +1,7 @@
 from Function.load_save_image import *
 from Function.Process_Image import *
 import cv2
+from scipy import ndimage
 
 #Introduzione e scelta filtro 
 print("Progetto Image Transformation\n")
@@ -15,7 +16,7 @@ selezione = '1'
 #Carico l'Immagine
 
 Numero_immagine = '1'
-image = load_image("Data/Input/Photo"+Numero_immagine+".jpg")
+image = load_image("Data/Input/paesaggio.jpg")
 
 
 #Photo sketching
@@ -44,7 +45,8 @@ if selezione == '1':
     
     Gaussian_Filter = Create_Gaussian_Filter(1)
     
-    blurred_img = convolve_Image(inverted_image, Gaussian_Filter)
+   # blurred_img = convolve_Image(inverted_image, Gaussian_Filter)
+    blurred_img = ndimage.convolve(inverted_image,Gaussian_Filter)
     
     print("Fase 3 COMPLETATA\n")
     

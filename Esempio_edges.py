@@ -4,7 +4,7 @@ import cv2
 import numpy as np
 from scipy import ndimage
 
-image = load_image("Data/Input/Photo1.jpg")
+image = load_image("Data/Input/paesaggio.jpg")
 
 width = image.shape[0]
 height = image.shape[1]
@@ -33,4 +33,17 @@ img_con_Nms = NonMaxSup(Mag, Grad)
 
 Thresh_img = thresholding(img_con_Nms,8, 43, 255, 50)
 
-save_gray_image(Thresh_img, "Thresh")
+afterIsteresi = isteresi(Thresh_img, 255, 50)
+
+save_gray_image(afterIsteresi, "Isteresi")
+
+bilateral = cv2.bilateralFilter(image, d=7, sigmaColor=200,sigmaSpace=200)
+
+save_image(bilateral, "Bilateral")
+
+
+
+#Fase finale
+
+final_image = Final_Cartoon(bilateral, afterIsteresi)
+save_image(final_image, "cartoon")
