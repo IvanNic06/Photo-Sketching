@@ -13,14 +13,14 @@ def load_image(imagename):
 #Prendo in input un array e lo converto in un tipo PIL.Image in modo da poter salvare la foto 
 def save_image(array,imagename):
     image = PIL.Image.fromarray(array)
-    image.save("Data/Output_Photo_Sketching/" + imagename + ".png")
+    image.save(imagename + ".png")
     return
 
 
 #Prendo in input un array 2x2 e lo converto in un tipo PIL.Image in modo da poter salvare la foto 
 def save_gray_image(array,imagename):
     image = PIL.Image.fromarray(array)
-    image.convert("L").save("Data/Output_Photo_Sketching/" + imagename + ".png")
+    image.convert("L").save(imagename + ".png")
     return
 
 

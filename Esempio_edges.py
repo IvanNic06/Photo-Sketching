@@ -2,7 +2,7 @@ from Function.load_save_image import *
 from Function.Process_Image import *
 import cv2
 import numpy as np
-from scipy import ndimage
+#from scipy import ndimage
 
 image = load_image("Data/Input/paesaggio.jpg")
 
@@ -13,7 +13,7 @@ channels = image.shape[2]
 gray = RGB_TO_GRAY(image)
 
 Filter = Create_Gaussian_Filter(1)
-blurred_gray = ndimage.convolve(gray,Filter)
+blurred_gray = convolve_gray_image(gray,Filter)
 
 gx = sobel_filters(blurred_gray, 'x')
 gx = Normalize(gx)
@@ -35,15 +35,15 @@ Thresh_img = thresholding(img_con_Nms,8, 43, 255, 50)
 
 afterIsteresi = isteresi(Thresh_img, 255, 50)
 
-save_gray_image(afterIsteresi, "Isteresi")
+save_gray_image(afterIsteresi, "NUOVA Isteresi")
 
 bilateral = cv2.bilateralFilter(image, d=7, sigmaColor=200,sigmaSpace=200)
 
-save_image(bilateral, "Bilateral")
+save_image(bilateral, "NUOVA Bilateral")
 
 
 
 #Fase finale
 
 final_image = Final_Cartoon(bilateral, afterIsteresi)
-save_image(final_image, "cartoon")
+save_image(final_image, "NUOVA CARTOON")

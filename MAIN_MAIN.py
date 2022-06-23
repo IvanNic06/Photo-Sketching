@@ -1,7 +1,7 @@
 from Function.load_save_image import *
 from Function.Process_Image import *
 import cv2
-from scipy import ndimage
+#from scipy import ndimage
 
 #Introduzione e scelta filtro 
 print("Progetto Image Transformation\n")
@@ -45,8 +45,8 @@ if selezione == '1':
     
     Gaussian_Filter = Create_Gaussian_Filter(1)
     
-   # blurred_img = convolve_Image(inverted_image, Gaussian_Filter)
-    blurred_img = ndimage.convolve(inverted_image,Gaussian_Filter)
+    blurred_img = convolve_gray_image(inverted_image, Gaussian_Filter)
+   # blurred_img = ndimage.convolve(inverted_image,Gaussian_Filter)
     
     print("Fase 3 COMPLETATA\n")
     
@@ -71,7 +71,7 @@ if selezione == '1':
     
     print("Salvataggio della foto in corso")
     
-    save_gray_image(sketched_image, "Photo"+Numero_immagine+" modificata")
+    save_gray_image(sketched_image, "Data/Output_Photo_Sketching/Sketched_Photo")
     
     print("Salvataggio completatoa")
     
@@ -94,8 +94,59 @@ elif selezione == '2':
     
     Gaussian_Filter = Create_Gaussian_Filter(1)
     
-    blurred_img = convolve_Image(inverted_image, Gaussian_Filter)
+    blurred_img = convolve_gray_image(gray_image, Gaussian_Filter)
     
     print("Fase 2 COMPLETATA\n")
     
+    #Passo 3: Edge detection
     
+    print("Fase 3: EDGE DETECTION\n")
+    
+    gx = sobel_filters(blurred_img, 'x')
+    gx = Normalize(gx)
+    gy = sobel_filters(blurred_img, 'y')
+    gy = Normalize(gy)
+
+    Mag = np.hypot(gx,gy)
+
+    Mag = Mag * 255
+
+    Grad = np.degrees(np.arctan2(gy,gx))
+
+    #Non Maximum supression
+    img_con_Nms = NonMaxSup(Mag, Grad)
+
+    #THresHolding
+
+    Thresh_img = thresholding(img_con_Nms,8, 43, 255, 50)
+
+    afterIsteresi = isteresi(Thresh_img, 255, 50)
+    
+    print("Fase 3 COMPLETATA\n")
+    
+    #Passo 4: Bilateral Filter
+    
+    print("Fase 4: BILATERAL FILTER\n")
+    
+    
+    bilateral = cv2.bilateralFilter(image, d=7, sigmaColor=200,sigmaSpace=200)
+
+    print("Fase 4 COMPLETATA\n")
+
+    #Fase finale
+
+    print("Fase 5: CARTOONIZE\n")
+    
+    final_image = Final_Cartoon(bilateral, afterIsteresi)
+    
+    print("Fase 5 COMPLETATA\n")
+    
+    #Passo 6: Salvataggio della foto
+    
+    print("Salvataggio della foto in corso")
+    
+    save_image(final_image, "Data/Output_Cartoonifying/Cartooned_Photo")
+    
+    print("Salvataggio completatoa")
+    
+    print("Photo sketching completato, la foto è stata salvata in Data/Output")

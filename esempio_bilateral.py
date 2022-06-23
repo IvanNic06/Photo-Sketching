@@ -2,7 +2,7 @@ from Function.load_save_image import *
 from Function.Process_Image import *
 import cv2
 import numpy as np
-from scipy import ndimage
+#from scipy import ndimage
 
 image = load_image("Data/Input/Photo1.jpg")
 

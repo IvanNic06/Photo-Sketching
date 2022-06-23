@@ -1,7 +1,7 @@
 import numpy as np
 import PIL
 import math
-from scipy import ndimage
+#from scipy import ndimage
 #Converto in immagine bianco e nero
 
 def RGB_TO_GRAY(Image):
@@ -51,6 +51,19 @@ def clamped_pixel(Image,x,y,c):
         c = Image.shape[2] - 1    
     return Image[x,y,c]
 
+def clamped_pixel_gray(Image,x,y):
+    x = int(x)
+    y = int(y)
+    if (x < 0):
+        x = 0
+    if (x >= Image.shape[0]):
+        x = Image.shape[0] - 1
+    if (y < 0):
+        y = 0
+    if (y >= Image.shape[1]):
+        y = Image.shape[1] - 1
+    return Image[x,y]
+
 
 
 def compute_gaussian(x,y,sigma):
@@ -81,26 +94,46 @@ def Create_Gaussian_Filter(sigma):
     l1_normalize(Filter)
     return Filter
             
+
+def convolve_gray_image(Image,Filter):
+    filter_offset = math.floor(Filter.shape[0] / 2)
+    Ret_Image = np.zeros(Image.shape)
+
+        
+        
+    #Per ogni pixel dell'immagine
+    for i in range(0,Image.shape[0]):
+       for j in range(0,Image.shape[1]):
+            somma = 0
+            for l in range(-filter_offset,filter_offset+1):
+                for m in range(-filter_offset,filter_offset+1):
+                   a = clamped_pixel_gray(Image, i-l, j-m)
+                   b = Filter[filter_offset-l,filter_offset-m]
+                   somma = somma + (a * b)
+            Ret_Image[i,j] = somma
+    return Ret_Image
+ 
     
-# def convolve_Image(Image,Filter):
-   
-#     filter_offset = int(Filter.shape[0] / 2)
-#     Image_ret = np.zeros((Image.shape[0],Image.shape[1]))    
-    
-#     width = Image.shape[0]
-#     height = Image.shape[1]
-    
-#     for i in range(0,width):
-#         for j in range(0,height):
-#             somma = 0
-#             for l in range(0-filter_offset,filter_offset):
-#                 for m in range(0-filter_offset,filter_offset):
-#                    # a = clamped_pixel(Image, i-l, j-m)
-#                     b = Filter[filter_offset-l,filter_offset-m]
-#                     somma = somma + a * b
-#             Image_ret[i,j] = somma
-#     return Image_ret
-            
+def convolve_image(Image,Filter):
+    filter_offset = int(Filter.shape[0] / 2)
+    Ret_Image = np.zeros(Image.shape)
+
+        
+        
+    #Per ogni pixel dell'immagine
+    for k in range(0,Image.shape[2]):
+        for i in range(0,Image.shape[0]):
+            for j in range(0,Image.shape[1]):
+                somma = 0
+                for l in range(-filter_offset,filter_offset+1):
+                    for m in range(-filter_offset,filter_offset+1):
+                       a = clamped_pixel(Image, i-l, j-m, k)
+                       b = Filter[filter_offset-l,filter_offset-m]
+                       somma = somma + a * b
+                Ret_Image[i,j,k] = somma
+    return Ret_Image
+
+
 def Image_Division(Image1,Image2,scale):
     Final_Image = np.zeros((Image1.shape[0],Image1.shape[1]))
     for x in range(0,Image1.shape[0]):
@@ -111,13 +144,15 @@ def Image_Division(Image1,Image2,scale):
 #Funzioni per colorize sobel   
 
 def sobel_filters(image,direction):
-    
+    Ret_Image = np.zeros(image.shape)
     if (direction == "x"):
         Gx_Filter = np.array([[-1,0,1],[-2,0,2],[-1,0,1]])
-        Ret_Image = ndimage.convolve(image,Gx_Filter)
+        #Ret_Image = ndimage.convolve(image,Gx_Filter)
+        Ret_Image = convolve_gray_image(image,Gx_Filter)
     elif (direction == "y"):
          Gy_Filter = np.array([[-1,-2,-1],[0,0,0],[1,2,1]])
-         Ret_Image = ndimage.convolve(image,Gy_Filter)
+        # Ret_Image = ndimage.convolve(image,Gy_Filter)
+         Ret_Image = convolve_gray_image(image,Gy_Filter)
 
     return Ret_Image
 
