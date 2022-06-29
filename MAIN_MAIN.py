@@ -18,7 +18,7 @@ selezione = str(input(""))
 #Carico l'Immagine
 
 Numero_immagine = '1'
-image = load_image("Data/Input/paesaggio.jpg")
+image = load_image("Data/Input/colonne.jpg")
 
 
 #Photo sketching
@@ -74,7 +74,7 @@ if selezione == '1':
     
     print("Salvataggio della foto in corso")
     
-    save_gray_image(sketched_image, "Data/Output_Photo_Sketching/Sketched_Photo_MIO")
+    save_gray_image(sketched_image, "Data/Output_Photo_Sketching/colonne")
     
     print("Salvataggio completatoa")
     
@@ -150,7 +150,7 @@ elif selezione == '2':
     
     print("Salvataggio della foto in corso")
     
-    save_image(final_image, "Data/Output_Cartoonifying/Cartooned_Photo_MIO_NUOVO")
+    save_image(final_image, "Data/Output_Cartoonifying/colonne")
     
     print("Salvataggio completatoa")
     
@@ -207,12 +207,14 @@ elif selezione == '3':
     Thresh_img = thresholding(img_con_Nms,8, 43, 255, 50)
 
     afterIsteresi = isteresi(Thresh_img, 255, 50)
+
+    retImage = afterIsteresi
     
     print("Fase 3 COMPLETATA\n")
 
     print("Fase 4 SOVRAPPOSIZIONE E COLORAZIONI DEI BORDI")
 
-    if colore == "bianco":
+    if colore == "cazzo":
         print("Fase 4 COMPLETATA\n")
         print("Salvataggio della foto in corso")
         save_image(afterIsteresi, "Data/Output_Color_Edge/Colored_edge")
@@ -252,6 +254,16 @@ elif selezione == '3':
                             retImage[i,j,0] = image[i,j,0]
                             retImage[i,j,1] = image[i,j,1]
                             retImage[i,j,2] = image[i,j,2]
+                    if (colore == "bianco"):
+                        if afterIsteresi[i,j] == 255:
+                            retImage[i,j,0] = 255
+                            retImage[i,j,1] = 255
+                            retImage[i,j,2] = 255
+                        else:
+                            retImage[i,j,0] = image[i,j,0]
+                            retImage[i,j,1] = image[i,j,1]
+                            retImage[i,j,2] = image[i,j,2]
+
 
     print("Fase 4 COMPLETATA\n")
     print("Salvataggio della foto in corso")

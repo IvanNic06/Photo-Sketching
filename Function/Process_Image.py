@@ -138,7 +138,10 @@ def Image_Division(Image1,Image2,scale):
     Final_Image = np.zeros((Image1.shape[0],Image1.shape[1]))
     for x in range(0,Image1.shape[0]):
         for y in range(0,Image1.shape[1]):
-            Final_Image[x,y] = Image1[x,y] * 255 / Image2[x,y]
+            if Image2[x,y] == 0:
+                Final_Image[x,y] = Image1[x,y] * 255 / (Image2[x,y] + 1)
+            else:
+                Final_Image[x,y] = Image1[x,y] * 255 / Image2[x,y]
     return Final_Image
 
 #Funzioni per colorize sobel   
