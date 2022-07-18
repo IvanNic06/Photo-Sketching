@@ -1,7 +1,6 @@
 import numpy as np
 import PIL
 import math
-#from scipy import ndimage
 #Converto in immagine bianco e nero
 
 def RGB_TO_GRAY(Image):
@@ -81,6 +80,8 @@ def l1_normalize(Image):
             Image[i,j] = Image[i,j] / somma
     return
 
+#Funzione che crea un filtro gaussiano
+
 def Create_Gaussian_Filter(sigma):
     Range = int(sigma*3)
     size = Range * 2 + 1
@@ -94,6 +95,7 @@ def Create_Gaussian_Filter(sigma):
     l1_normalize(Filter)
     return Filter
             
+#Effettua convoluzione per immagini in gray scale
 
 def convolve_gray_image(Image,Filter):
     filter_offset = math.floor(Filter.shape[0] / 2)
@@ -113,7 +115,9 @@ def convolve_gray_image(Image,Filter):
             Ret_Image[i,j] = somma
     return Ret_Image
  
-    
+
+#Effettua convoluzione per immagini a colori
+
 def convolve_image(Image,Filter):
     filter_offset = int(Filter.shape[0] / 2)
     Ret_Image = np.zeros(Image.shape)
@@ -133,6 +137,7 @@ def convolve_image(Image,Filter):
                 Ret_Image[i,j,k] = somma
     return Ret_Image
 
+#Funzione che effetua la divisione dei valori dei pixel tra 2 immagini 
 
 def Image_Division(Image1,Image2,scale):
     Final_Image = np.zeros((Image1.shape[0],Image1.shape[1]))
@@ -144,140 +149,13 @@ def Image_Division(Image1,Image2,scale):
                 Final_Image[x,y] = Image1[x,y] * 255 / Image2[x,y]
     return Final_Image
 
-#Funzioni per colorize sobel   
-
-def sobel_filters(image,direction):
-    Ret_Image = np.zeros(image.shape)
-    if (direction == "x"):
-        Gx_Filter = np.array([[-1,0,1],[-2,0,2],[-1,0,1]])
-        #Ret_Image = ndimage.convolve(image,Gx_Filter)
-        Ret_Image = convolve_gray_image(image,Gx_Filter)
-    elif (direction == "y"):
-         Gy_Filter = np.array([[-1,-2,-1],[0,0,0],[1,2,1]])
-        # Ret_Image = ndimage.convolve(image,Gy_Filter)
-         Ret_Image = convolve_gray_image(image,Gy_Filter)
-
-    return Ret_Image
 
 
-def Normalize(Image):
-    
-    Nimg = Image / np.max(Image)
-    
-    return Nimg
-    
-def NonMaxSup(Mag, Grad):
-    img = np.zeros(Mag.shape)
-    for i in range(1, int(Mag.shape[0]) - 1):
-        for j in range(1, int(Mag.shape[1]) - 1):
-            if((Grad[i,j] >= -22.5 and Grad[i,j] <= 22.5) or (Grad[i,j] <= -157.5 and Grad[i,j] >= 157.5)):
-                if((Mag[i,j] > Mag[i,j+1]) and (Mag[i,j] > Mag[i,j-1])):
-                    img[i,j] = Mag[i,j]
-                else:
-                    img[i,j] = 0
-            if((Grad[i,j] >= 22.5 and Grad[i,j] <= 67.5) or (Grad[i,j] <= -112.5 and Grad[i,j] >= -157.5)):
-                if((Mag[i,j] > Mag[i+1,j+1]) and (Mag[i,j] > Mag[i-1,j-1])):
-                    img[i,j] = Mag[i,j]
-                else:
-                    img[i,j] = 0
-            if((Grad[i,j] >= 67.5 and Grad[i,j] <= 112.5) or (Grad[i,j] <= -67.5 and Grad[i,j] >= -112.5)):
-                if((Mag[i,j] > Mag[i+1,j]) and (Mag[i,j] > Mag[i-1,j])):
-                    img[i,j] = Mag[i,j]
-                else:
-                    img[i,j] = 0
-            if((Grad[i,j] >= 112.5 and Grad[i,j] <= 157.5) or (Grad[i,j] <= -22.5 and Grad[i,j] >= -67.5)):
-                if((Mag[i,j] > Mag[i+1,j-1]) and (Mag[i,j] > Mag[i-1,j+1])):
-                    img[i,j] = Mag[i,j]
-                else:
-                    img[i,j] = 0
 
-    return img
+
     
 
-def thresholding(img,low,high,strong,weak):
-    Ret_Image = np.zeros(img.shape)
-    for x in range(0,img.shape[0]):
-        for y in range(0,img.shape[1]):
-            
-            if img[x,y] >= high:
-                Ret_Image[x,y] = strong
-            elif img[x,y] < high and img[x,y] >= low:
-                Ret_Image[x,y] = weak
-            else:
-                Ret_Image[x,y] = 0
-    return Ret_Image
 
- 
-def isteresi(img,strong,weak):
-    Ret_Image = np.zeros(img.shape)
-    for x in range(1,img.shape[0]):
-        for y in range(1,img.shape[1]):
-            if img[x,y] == strong:
-                Ret_Image[x,y] = strong
-            elif img[x,y] == weak:
-                if ((img[x-1,y-1] == strong) or (img[x-1,y] == strong) or (img[x-1,y+1] == strong) or (img[x,y-1] == strong) or (img[x,y+1] == strong) or (img[x+1,y-1] == strong) or (img[x+1,y] == strong) or (img[x+1,y+1] == strong)):
-                    Ret_Image[x,y] = strong
-    return Ret_Image
-    
-    
-def createBilateralFilter(im,sgf,cx,cy,cc,sigma):
-    cgf = np.zeros(sgf.shape)
-    for y in range(0,sgf.shape[1]):
-        for x in range(0,sgf.shape[0]):
-            ax = cx - sgf.shape[0]/2 + x
-            ay = cy - sgf.shape[0]/2 + y
-            diff = clamped_pixel(im, ax, ay, cc) - clamped_pixel(im,cx,cy,cc)
-            var = sigma ** 2
-            c = 2 * math.pi * var
-            p = -math.pow(diff,2)/(2*var)
-            e = math.exp(p)
-            val = e/c
-            cgf[x,y] = val
-            
-    bf = np.zeros(sgf.shape)
-    for y in range(0,bf.shape[1]):
-        for x in range(0,bf.shape[0]): 
-            bf[x,y] = sgf[x,y] * cgf[x,y]
-            
-    l1_normalize(bf)
-    
-    return bf
-
-def bilateralFilter(im,sigma1,sigma2):
-    
-    gf = Create_Gaussian_Filter(sigma1)
-    
-    Ret_Image = np.zeros(im.shape)
-    
-    for c in range(0,im.shape[2]):
-        for y in range(0,im.shape[1]):
-            for x in range(0,im.shape[0]):
-                
-                #Ricavo il filtro bilaterale
-                
-                bf = createBilateralFilter(im, gf, x, y, c, sigma2)
-                
-                somma = 0
-                
-                for fy in range(0,gf.shape[0]):
-                    for fx in range(0,gf.shape[0]):
-                        ax = x - bf.shape[0]/2 + fx
-                        ay = y - bf.shape[0]/2 + fy
-                        somma = somma + bf[fx,fy] * clamped_pixel(im, ax, ay, c)
-                
-                Ret_Image[x,y,c] = somma
-    
-    return Ret_Image
-    
-
-def Final_Cartoon(Image_blurred,edge_mask):
-    for x in range(0,edge_mask.shape[0]):
-        for y in range(0,edge_mask.shape[1]):
-            if edge_mask[x,y] == 255:
-                Image_blurred[x,y,0] = 0
-                Image_blurred[x,y,1] = 0
-                Image_blurred[x,y,2] = 0
-    return Image_blurred
 
 
     
