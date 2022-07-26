@@ -1,7 +1,7 @@
 if __name__ == "__main__":
     from Function.MultiCore.Process_Image_MC import *
     from Function.load_save_image import *
-    from Function.Process_Image import *
+    from Function.SingleCore.Process_Image import *
     import numpy as np
     from matplotlib import pyplot as plt
     import time
@@ -84,6 +84,8 @@ if __name__ == "__main__":
         print("Hai a disposizione " + str(mp.cpu_count()) + " core")
         numero_core = int(input("Quanti core usare? "))
 
+
+    start = time.time()
     
     print("Fase 1: RGB TO GRAY")
 
@@ -112,16 +114,24 @@ if __name__ == "__main__":
         np.save("Image.npy",inverted_image)
         heigth = inverted_image.shape[0]
         width = inverted_image.shape[1]
+        filterSize = Gaussian_Filter.shape[0]
+        filterOffset = math.floor(filterSize/2)
+        
+        
+        imageWithPadding = np.zeros((image.shape[0] + filterSize - 1, image.shape[1] + filterSize - 1))        
+        imageWithPadding[filterOffset:-filterOffset, filterOffset:-filterOffset] = inverted_image
+        
+        
         lista = []
         for i in range(0,numero_core):
             #Gaussian_Filter = Create_Gaussian_Filter(1)
-            lista.append(mp.Process(target = convolve_multi_core_2, args=(Gaussian_Filter,int((width/numero_core)*i),int((width/numero_core)*(i+1)))))
+            lista.append(mp.Process(target = convolve_multi_core_2, args=(imageWithPadding,Gaussian_Filter,int((width/numero_core)*i),int((width/numero_core)*(i+1)))))
             lista[i].start()
-            print("Processo numero " + str(i) + " in esecuzione")
+            #print("Processo numero " + str(i) + " in esecuzione")
 
         for i in range(0,numero_core):
             lista[i].join()
-            print("Processo numero " + str(i) + " terminato")
+            #print("Processo numero " + str(i) + " terminato")
 
         blurred = np.load("Image.npy","r+")
 
@@ -143,6 +153,16 @@ if __name__ == "__main__":
 
     print("FASE 5 COMPLETATA")
 
+    end = time.time()
 
 
-    save_gray_image(sketched_image, "Data/Output/SKETCHED2")
+    print("Le modifiche sono state apportate in " + str(end - start) + " secondi")
+
+
+    print("Salvataggio della foto in corso")
+        
+    save_gray_image(sketched_image, "Data/Output/" + nomeImmagine + "SKETCHED")
+        
+    print("Salvataggio completatoa")
+        
+    print("Photo sketching completato, la foto è stata salvata in Data/Output_Photo_Sketching")

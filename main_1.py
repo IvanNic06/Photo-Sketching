@@ -1,6 +1,6 @@
 if __name__ == "__main__":
     from Function.load_save_image import *
-    from Function.Process_Image import *
+    from Function.SingleCore.Process_Image import *
     from Function.MultiCore.Process_Image_MC import *
     import numpy as np
     from matplotlib import pyplot as plt
@@ -85,7 +85,7 @@ if __name__ == "__main__":
 
     if Multicore == "si":
         print("Hai a disposizione " + str(mp.cpu_count()) + " core")
-        numero_core = int(input("Quanti core usare? "))
+        numero_core = int(input("Quanti processi usare? "))
         
     #Passo 1: Trasformo l'immagine in bianco e nero
     
@@ -127,11 +127,11 @@ if __name__ == "__main__":
             #Gaussian_Filter = Create_Gaussian_Filter(1)
             lista.append(mp.Process(target = convolve_multi_core, args=(Gaussian_Filter,int((width/numero_core)*i),int((width/numero_core)*(i+1)))))
             lista[i].start()
-            print("Processo numero " + str(i) + " in esecuzione")
+            #print("Processo numero " + str(i) + " in esecuzione")
 
         for i in range(0,numero_core):
             lista[i].join()
-            print("Processo numero " + str(i) + " terminato")
+            #print("Processo numero " + str(i) + " terminato")
 
         blurred_img = np.load("Image.npy","r+")  
     
@@ -163,7 +163,7 @@ if __name__ == "__main__":
         
     print("Salvataggio della foto in corso")
         
-    save_gray_image(sketched_image, "Data/Output/" + nomeImmagine + "2")
+    save_gray_image(sketched_image, "Data/Output/" + nomeImmagine + "SKETCHED")
         
     print("Salvataggio completatoa")
         

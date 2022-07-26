@@ -35,15 +35,12 @@ def clamped_pixel_gray(Image,x,y):
     return Image[x,y]
 
 
-def convolve_multi_core_2(Filter,starty,endy):
+def convolve_multi_core_2(imageWithPadding,Filter,starty,endy):
     image = np.load("Image.npy","r+")
     filterSize = Filter.shape[0]              #DImensione del filtro
-    print(filterSize)
+    #print(filterSize)
     filterOffset = math.floor(filterSize/2)   #Dimensione metà filtro escluso il centro
-    print(filterOffset)
-
-    imageWithPadding = np.zeros((image.shape[0] + filterSize - 1, image.shape[1] + filterSize - 1))     #Aggiungo padding all'immagine dato in input per poter utilizzare il filtro sui pixel del bordo
-    imageWithPadding[filterOffset:-filterOffset, filterOffset:-filterOffset] = image
+    #print(filterOffset)
 
     for i in range(starty,endy):
         for j in range(image.shape[0]):
