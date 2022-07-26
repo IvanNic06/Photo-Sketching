@@ -1,6 +1,7 @@
 import numpy as np
 import PIL
 import math
+from regex import R
 #Converto in immagine bianco e nero
 
 def RGB_TO_GRAY(Image):
@@ -101,8 +102,6 @@ def convolve_gray_image(Image,Filter):
     filter_offset = math.floor(Filter.shape[0] / 2)
     Ret_Image = np.zeros(Image.shape)
 
-        
-        
     #Per ogni pixel dell'immagine
     for i in range(0,Image.shape[0]):
        for j in range(0,Image.shape[1]):
@@ -114,28 +113,27 @@ def convolve_gray_image(Image,Filter):
                    somma = somma + (a * b)
             Ret_Image[i,j] = somma
     return Ret_Image
- 
 
-#Effettua convoluzione per immagini a colori
 
-def convolve_image(Image,Filter):
-    filter_offset = int(Filter.shape[0] / 2)
-    Ret_Image = np.zeros(Image.shape)
+def convolve_image_2(image,filter):
 
-        
-        
-    #Per ogni pixel dell'immagine
-    for k in range(0,Image.shape[2]):
-        for i in range(0,Image.shape[0]):
-            for j in range(0,Image.shape[1]):
-                somma = 0
-                for l in range(-filter_offset,filter_offset+1):
-                    for m in range(-filter_offset,filter_offset+1):
-                       a = clamped_pixel(Image, i-l, j-m, k)
-                       b = Filter[filter_offset-l,filter_offset-m]
-                       somma = somma + a * b
-                Ret_Image[i,j,k] = somma
-    return Ret_Image
+    retImage = np.zeros(image.shape)          #Creo array da restituire in output
+    
+    filterSize = filter.shape[0]              #Dimensione del filtro
+    print(filterSize)
+    filterOffset = math.floor(filterSize/2)   #Dimensione metà filtro escluso il centro
+    print(filterOffset)
+    
+    imageWithPadding = np.zeros((image.shape[0] + filterSize - 1, image.shape[1] + filterSize - 1))     #Aggiungo padding all'immagine dato in input per poter utilizzare il filtro sui pixel del bordo
+    imageWithPadding[filterOffset:-filterOffset, filterOffset:-filterOffset] = image
+
+    # Per ogni pixel dell'immagine
+    for x in range(image.shape[1]):
+        for y in range(image.shape[0]):
+            #Effettuo il prodotto elemento per elemento delle 2 matrici e poi sommo tutti gli elementi della matrice
+            retImage[y, x] = (filter * imageWithPadding[y: y+filterSize, x: x+filterSize]).sum()
+    return retImage
+
 
 #Funzione che effetua la divisione dei valori dei pixel tra 2 immagini 
 
@@ -150,12 +148,12 @@ def Image_Division(Image1,Image2,scale):
     return Final_Image
 
 
-
-
-
     
+#  12 = FILTER.SHAPE[0] - 1 
 
+#  6 = FILTER.SHAPE[0] / 2
 
+#  13 = FILTER.SHAPE[0]
 
 
     
